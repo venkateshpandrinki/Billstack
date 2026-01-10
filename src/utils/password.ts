@@ -1,0 +1,13 @@
+import bcrypt from "bcryptjs"
+
+
+const  SALT_ROUNDS = 12
+
+export async function saltAndHashPassword(password:string) {
+    return bcrypt.hash(password,SALT_ROUNDS)
+}
+
+export async function verifyPassword(password:string,hashedPassword:string) {
+    return bcrypt.compare(password,hashedPassword)
+    
+}

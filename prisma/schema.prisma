@@ -1,0 +1,220 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * Enums
+ */
+enum Role {
+  USER
+  TENANT_ADMIN
+  SUPER_ADMIN
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INCOMPLETE
+  TRIALING
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+}
+
+/**
+ * Tenant / Billing core
+ */
+model Tenant {
+  id            String         @id @default(uuid())
+  slug          String         @unique
+  name          String
+  planId        String? // optional reference to default plan
+  plan          Plan?          @relation(fields: [planId], references: [id])
+  subscriptions Subscription[]
+  invoices      Invoice[]
+  usageRecords  UsageRecord[]
+  users         User[]
+  auditLogs     AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id              String          @id @default(uuid())
+  name            String
+  priceCents      Int
+  billingInterval BillingInterval
+  metadata        Json?
+  subscriptions   Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenants   Tenant[]
+}
+
+model Subscription {
+  id               String             @id @default(uuid())
+  tenantId         String
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stripeSubId      String?            @unique
+  status           SubscriptionStatus
+  currentPeriodEnd DateTime?
+  planId           String?
+  plan             Plan?              @relation(fields: [planId], references: [id])
+  invoices         Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  tenantId        String
+  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  amountCents     Int
+  status          InvoiceStatus
+  stripeInvoiceId String?       @unique
+  issuedAt        DateTime?
+  description     String?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?
+}
+
+model UsageRecord {
+  id         String   @id @default(uuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  metric     String
+  quantity   Int
+  recordedAt DateTime @default(now())
+  metadata   Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * Webhooks & Audit
+ */
+model WebhookEvent {
+  id         String   @id
+  payload    Json
+  receivedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  tenantId  String? // can be null for platform-level actions
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actor     String
+  action    String
+  data      Json?
+  createdAt DateTime @default(now())
+}
+
+/**
+ * Auth.js / NextAuth models (kept & extended for multi-tenancy)
+ * NOTE: user.tenantId is optional to allow platform users (SUPER_ADMIN) without a tenant.
+ */
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  image          String?
+  // password hash stored here (nullable if using external providers)
+  hashedPassword String?
+
+  // tenancy & roles
+  tenantId String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id])
+  role     Role    @default(USER)
+
+  // NextAuth relations
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+/**
+ * Optional WebAuthn support
+ */
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
