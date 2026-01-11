@@ -41,7 +41,7 @@ enum InvoiceStatus {
  * Tenant / Billing core
  */
 model Tenant {
-  id            String         @id @default(uuid())
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug          String         @unique
   name          String
   planId        String? // optional reference to default plan
@@ -70,13 +70,13 @@ model Plan {
 }
 
 model Subscription {
-  id               String             @id @default(uuid())
-  tenantId         String
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String @db.Uuid
   tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   stripeSubId      String?            @unique
   status           SubscriptionStatus
   currentPeriodEnd DateTime?
-  planId           String?
+  planId           String? @db.Uuid
   plan             Plan?              @relation(fields: [planId], references: [id])
   invoices         Invoice[]
 
@@ -85,8 +85,8 @@ model Subscription {
 }
 
 model Invoice {
-  id              String        @id @default(uuid())
-  tenantId        String
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String @db.Uuid
   tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   amountCents     Int
   status          InvoiceStatus
@@ -101,8 +101,8 @@ model Invoice {
 }
 
 model UsageRecord {
-  id         String   @id @default(uuid())
-  tenantId   String
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String @db.Uuid
   tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   metric     String
   quantity   Int
@@ -126,8 +126,8 @@ model WebhookEvent {
 }
 
 model AuditLog {
-  id        String   @id @default(uuid())
-  tenantId  String? // can be null for platform-level actions
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String? @db.Uuid
   tenant    Tenant?  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   actor     String
   action    String
@@ -140,7 +140,7 @@ model AuditLog {
  * NOTE: user.tenantId is optional to allow platform users (SUPER_ADMIN) without a tenant.
  */
 model User {
-  id             String    @id @default(uuid())
+  id             String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name           String?
   email          String    @unique
   emailVerified  DateTime?
@@ -149,7 +149,7 @@ model User {
   hashedPassword String?
 
   // tenancy & roles
-  tenantId String?
+  tenantId String?  @db.Uuid
   tenant   Tenant? @relation(fields: [tenantId], references: [id])
   role     Role    @default(USER)
 

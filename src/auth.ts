@@ -4,13 +4,12 @@ import { ZodError } from "zod"
 import { signInSchema } from "@/lib/zod"
 import { getUserFromDb } from "@/utils/db"
 import { verifyPassword } from "@/utils/password"
-import { getTenantFromRequest } from "@/utils/tenant" 
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "./lib/prisma"
+import { getTenantFromHost } from "@/utils/tenant"
+
 
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+ 
   session: {
     strategy: "jwt",
   },
@@ -26,7 +25,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           const { email, password } = await signInSchema.parseAsync(credentials)
 
           // 2. Resolve tenant from subdomain
-          const tenant = await getTenantFromRequest(req)
+          const tenant = await getTenantFromHost(req.headers)
           if (!tenant) return null
 
           // 3. Fetch user scoped to tenant
@@ -34,9 +33,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!user) return null
 
           // 4. Verify password
+          if (!user.hashedPassword) return null
           const isValid = await verifyPassword(
             password,
-            user.hashed_password
+            user.hashedPassword
           )
           if (!isValid) return null
 
@@ -56,4 +56,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+  async jwt({ token, user }) {
+        if (user) {
+      token.role = (user as any).role
+      token.tenantId = (user as any).tenantId
+    }
+    return token
+  },
+
+  async session({ session, token }) {
+    if (session.user) {
+      session.user.role = token.role as any
+      session.user.tenantId = token.tenantId as string
+    }
+    return session
+  },
+},
 })
