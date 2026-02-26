@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { getTenantFromHost } from "@/utils/tenant"
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const res = NextResponse.next()
 
   const tenant = await getTenantFromHost(req.headers)
