@@ -7,10 +7,10 @@ export async function getTenantFromHost(headers: Headers) {
   const host = headers.get("host")
   if (!host) return null
 
-  // billstack.vercel.app → no tenant
+  
   if (host === BASE_DOMAIN) return null
 
-  // acme.billstack.vercel.app → acme
+  
   const slug = host.replace(`.${BASE_DOMAIN}`, "")
   if (!slug || slug === "www") return null
 
