@@ -57,7 +57,7 @@ model Tenant {
 }
 
 model Plan {
-  id              String          @id @default(uuid())
+   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name            String
   priceCents      Int
   billingInterval BillingInterval
@@ -97,7 +97,7 @@ model Invoice {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String?
+  subscriptionId String? @db.Uuid
 }
 
 model UsageRecord {
@@ -163,7 +163,7 @@ model User {
 }
 
 model Account {
-  userId            String
+  userId String @db.Uuid
   type              String
   provider          String
   providerAccountId String
@@ -185,7 +185,7 @@ model Account {
 
 model Session {
   sessionToken String   @unique
-  userId       String
+  userId String @db.Uuid
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -206,7 +206,7 @@ model VerificationToken {
  */
 model Authenticator {
   credentialID         String  @unique
-  userId               String
+  userId String @db.Uuid
   providerAccountId    String
   credentialPublicKey  String
   counter              Int
