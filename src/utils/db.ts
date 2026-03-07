@@ -7,7 +7,7 @@ export async function getUserFromDb(
   return prisma.user.findFirst({
     where: {
       email,
-      tenant_id: tenantId,
+      tenantId,
     },
   })
 }

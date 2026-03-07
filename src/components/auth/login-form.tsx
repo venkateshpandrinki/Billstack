@@ -16,6 +16,7 @@ export function LoginForm() {
     const formData = new FormData(e.currentTarget)
 
     await signIn("credentials", {
+     
       email: formData.get("email"),
       password: formData.get("password"),
       callbackUrl: "/",
@@ -26,6 +27,8 @@ export function LoginForm() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      
+
       <div>
         <Label>Email</Label>
         <Input name="email" type="email" required />
