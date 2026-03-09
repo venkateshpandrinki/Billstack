@@ -1,30 +1,62 @@
 "use client"
 
 import {
+  CartesianGrid,
   LineChart,
   Line,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 
-export function MRRChart({ data }: { data: any[] }) {
+type MRRPoint = {
+  month: string
+  value: number
+}
+
+const chartConfig = {
+  value: {
+    label: "MRR",
+    color: "hsl(var(--primary))",
+  },
+} satisfies ChartConfig
+
+export function MRRChart({ data }: { data: MRRPoint[] }) {
   return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer>
+    <ChartContainer config={chartConfig} className="h-64 w-full">
         <LineChart data={data}>
+          <CartesianGrid vertical={false} />
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                formatter={(value) => (
+                  <span>
+                    {Number(value).toLocaleString("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    })}
+                  </span>
+                )}
+              />
+            }
+          />
           <Line
-            type="monotone"
+            type="natural"
             dataKey="value"
-            stroke="hsl(var(--primary))"
-            strokeWidth={2}
+            stroke="var(--color-value)"
+            strokeWidth={3}
+            dot={{ r: 3 }}
+            activeDot={{ r: 5 }}
           />
         </LineChart>
-      </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   )
 }

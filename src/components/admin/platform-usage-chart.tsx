@@ -1,18 +1,30 @@
 "use client"
 
 import {
+  CartesianGrid,
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 
 type PlatformUsagePoint = {
   metric: string
   quantity: number
 }
+
+const chartConfig = {
+  quantity: {
+    label: "Usage",
+    color: "hsl(var(--primary))",
+  },
+} satisfies ChartConfig
 
 export function PlatformUsageChart({ data }: { data: PlatformUsagePoint[] }) {
   if (data.length === 0) {
@@ -20,15 +32,14 @@ export function PlatformUsageChart({ data }: { data: PlatformUsagePoint[] }) {
   }
 
   return (
-    <div className="h-72 w-full">
-      <ResponsiveContainer>
+    <ChartContainer config={chartConfig} className="h-72 w-full">
         <BarChart data={data}>
+          <CartesianGrid vertical={false} />
           <XAxis dataKey="metric" />
           <YAxis />
-          <Tooltip />
-          <Bar dataKey="quantity" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="quantity" fill="var(--color-quantity)" radius={[6, 6, 0, 0]} />
         </BarChart>
-      </ResponsiveContainer>
-    </div>
+    </ChartContainer>
   )
 }

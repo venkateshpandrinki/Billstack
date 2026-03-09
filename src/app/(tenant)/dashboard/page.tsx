@@ -54,10 +54,16 @@ export default async function DashboardPage() {
     dailyTotals.set(key, (dailyTotals.get(key) ?? 0) + event.quantity)
   }
 
-  const chartData = Array.from(dailyTotals.entries()).map(([date, usage]) => ({
-    day: new Date(date).toLocaleDateString("en-US", { day: "numeric" }),
-    usage,
-  }))
+  const chartData: Array<{ day: string; usage: number }> = []
+  const cursor = new Date(startOfMonth)
+  while (cursor <= now) {
+    const key = cursor.toISOString().slice(0, 10)
+    chartData.push({
+      day: cursor.toLocaleDateString("en-US", { day: "numeric" }),
+      usage: dailyTotals.get(key) ?? 0,
+    })
+    cursor.setDate(cursor.getDate() + 1)
+  }
 
   const usageThisMonthTotal = chartData.reduce((acc, item) => acc + item.usage, 0)
   const usageLabel = selectedMetric ? humanizeMetric(selectedMetric) : "Usage"
@@ -78,7 +84,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle>Plan</CardTitle>
           </CardHeader>
-          <CardContent>Pro (Mock)</CardContent>
+          <CardContent>Pro</CardContent>
         </Card>
 
         <Card>
