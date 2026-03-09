@@ -30,6 +30,7 @@ function getFeatures(metadata: unknown) {
 
 export function BillingPlans() {
   const [plans, setPlans] = useState<Plan[]>([])
+  const [activePlanId, setActivePlanId] = useState<string | null>(null)
   const [loadingPlans, setLoadingPlans] = useState(true)
   const [activatingPlanId, setActivatingPlanId] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
@@ -39,6 +40,7 @@ export function BillingPlans() {
       const response = await fetch("/api/plans")
       const data = await response.json()
       setPlans(data.plans ?? [])
+      setActivePlanId(data.activePlanId ?? null)
       setLoadingPlans(false)
     }
 
@@ -61,6 +63,7 @@ export function BillingPlans() {
     })
 
     if (response.ok) {
+      setActivePlanId(planId)
       setToastMessage(`${planName} plan activated`)
     } else {
       setToastMessage("Failed to activate plan")
@@ -82,6 +85,8 @@ export function BillingPlans() {
       <div className="grid gap-4 md:grid-cols-2">
         {plans.map((plan) => {
           const features = getFeatures(plan.metadata)
+          const isActive = activePlanId === plan.id
+          const isActivating = activatingPlanId === plan.id
           return (
             <Card key={plan.id}>
               <CardHeader>
@@ -105,10 +110,14 @@ export function BillingPlans() {
 
                 <Button
                   onClick={() => activatePlan(plan.id, plan.name)}
-                  disabled={activatingPlanId === plan.id}
+                  disabled={isActive || isActivating}
                   className="w-full"
                 >
-                  {activatingPlanId === plan.id ? "Activating..." : "Activate Plan"}
+                  {isActive
+                    ? "Subscribed"
+                    : isActivating
+                    ? "Activating..."
+                    : "Switch to Plan"}
                 </Button>
               </CardContent>
             </Card>

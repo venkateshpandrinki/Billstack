@@ -9,12 +9,17 @@ import {
   ResponsiveContainer,
 } from "recharts"
 
-export function UsageChart({ data }: { data: any[] }) {
+type UsageChartPoint = {
+  day: string
+  usage: number
+}
+
+export function UsageChart({ data }: { data: UsageChartPoint[] }) {
   return (
     <div className="h-64 w-full">
       <ResponsiveContainer>
         <LineChart data={data}>
-          <XAxis dataKey="month" />
+          <XAxis dataKey="day" />
           <YAxis />
           <Tooltip />
           <Line
