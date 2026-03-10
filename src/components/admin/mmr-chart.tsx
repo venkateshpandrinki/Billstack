@@ -22,7 +22,7 @@ type MRRPoint = {
 const chartConfig = {
   value: {
     label: "MRR",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig
 

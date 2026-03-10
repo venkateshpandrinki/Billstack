@@ -22,7 +22,7 @@ type PlatformUsagePoint = {
 const chartConfig = {
   quantity: {
     label: "Usage",
-    color: "hsl(var(--primary))",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig
 

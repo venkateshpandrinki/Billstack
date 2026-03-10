@@ -1,17 +1,13 @@
 "use client";
 
-import React from "react";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { motion } from "framer-motion";
-import { ArrowRight, Hexagon, Triangle, Circle, Square, Command } from "lucide-react";
+import { ArrowRight, Command } from "lucide-react";
 import Link from "next/link";
-
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "600", "700"] });
-const sans = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+import Image from "next/image";
 
 export default function LandingPage() {
   return (
-    <div className={`${sans.className} relative min-h-screen w-full bg-[#fdfdfd] overflow-hidden text-slate-900 selection:bg-blue-100`}>
+    <div className="relative min-h-screen w-full overflow-hidden bg-[#fdfdfd] text-slate-900 selection:bg-blue-100">
       {/* Decorative Aurora Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {/* Top Left - Soft Blue */}
@@ -62,7 +58,7 @@ export default function LandingPage() {
           </div>
 
           {/* Main Heading */}
-          <h1 className={`${playfair.className} text-5xl md:text-7xl font-semibold tracking-tight text-slate-900 mb-8 leading-[1.05]`}>
+          <h1 className="mb-8 font-serif text-5xl font-semibold leading-[1.05] tracking-tight text-slate-900 md:text-7xl">
             Billing for Indie Makers, <br />
             <span className="italic text-blue-600">Simplified.</span>
           </h1>
@@ -74,14 +70,14 @@ export default function LandingPage() {
 
           {/* CTA */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-            <Link href="/signup" className="  md:w-1/4 sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 group">
+            <Link href="/signup" className="  md:w-1/4 sm:w-auto bg-linear-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2 group">
               Start Building
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
           {/* Dashboard Image */}
-          <div className="mt-16 w-full relative animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 fill-mode-both ease-out">
+          {/* <div className="mt-16 w-full relative animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 fill-mode-both ease-out">
             <div className="absolute inset-0 bg-linear-to-t from-[#fdfdfd] to-transparent z-10 h-32 bottom-0"></div>
             <div className="rounded-2xl border border-slate-200 bg-white/50 backdrop-blur-md shadow-2xl p-2 max-w-5xl mx-auto overflow-hidden">
               <img
@@ -89,6 +85,27 @@ export default function LandingPage() {
                 className="rounded-xl w-full grayscale-[0.05] opacity-95"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_GC3GNcFyK482_nMiYEgPDwTUdypKSu1aLRRmrX9WYTlmWnqQ4LDe5bBPmtqlLU2ZbZzbJRDpTUFGglBGdpz37aF4As_QWBf1SEnpOjpTtKrruMWsEU2PJauhPJQmRTWcLHqrbHgDotkg5mFi655g-PizvQUE75G8hzXpGTGFawBi1aV5EDMn6TYEC2yVywQ8IBU8VE9oelrb_1w7oEsy33TVVQpJXOWEwjM-F0VZLhpgMmaNek850TjqG3Y3CtxN_g8Zy7dBW-sS"
               />
+            </div>
+          </div> */}
+
+          {/* Updated Aesthetic Revenue Flow Image */}
+          <div className="mt-16 md:mt-24 w-full relative animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 fill-mode-both ease-out">
+
+            {/* The container uses glassmorphism and fits the image seamlessly */}
+            <div className="rounded-3xl border border-slate-100 bg-white/50 backdrop-blur-lg shadow-2xl p-3 max-w-6xl mx-auto overflow-hidden relative group hover:border-slate-200 transition-all duration-300">
+
+              {/* Subtle Inner Glow on Hover */}
+              <div className="absolute inset-0 bg-blue-100/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
+
+              {/* Using the 3D 'Revenue Flow' Image */}
+              <Image
+                alt="Billstack Revenue Stream Visualization"
+                className="rounded-2xl w-full h-auto aspect-video object-cover scale-100 group-hover:scale-[1.01] transition-transform duration-500"
+                src="/dash1.png"
+                width={1000}
+                height={1000}
+              />
+
             </div>
           </div>
         </motion.div>
@@ -100,7 +117,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-12">
               <div className="space-y-4">
-                <h2 className={`${playfair.className} text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-slate-900`}>Secure & Scalable <br /> Infrastructure</h2>
+                <h2 className="font-serif text-4xl font-semibold leading-tight tracking-tight text-slate-900 md:text-5xl">Secure & Scalable <br /> Infrastructure</h2>
                 <p className="text-slate-600 text-lg leading-relaxed font-medium">Built for the modern SaaS stack, Billstack takes the complexity out of tenant isolation and domain routing.</p>
               </div>
               <div className="grid gap-8">
@@ -148,7 +165,7 @@ export default function LandingPage() {
                   <span className="text-xs font-mono text-red-500/80 bg-red-50 px-2 py-1 rounded font-semibold">Access Denied</span>
                 </div>
 
-                <div className="absolute -top-4 -right-4 bg-slate-900 text-white p-4 rounded-2xl shadow-xl z-20">
+                <div className="absolute -top-2.5 -right-3 bg-slate-900 text-white p-4 rounded-2xl shadow-xl z-20">
                   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
                 </div>
               </div>
@@ -161,7 +178,7 @@ export default function LandingPage() {
       <section id="pricing" className="py-24 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 space-y-4">
-            <h2 className={`text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight ${playfair.className}`}>Simple, Transparent Pricing</h2>
+            <h2 className="font-serif text-4xl font-semibold tracking-tight text-slate-900 md:text-5xl">Simple, Transparent Pricing</h2>
             <p className="text-slate-600 font-medium text-lg max-w-xl mx-auto">Scale your SaaS without worrying about unexpected billing costs.</p>
           </div>
 
@@ -180,12 +197,12 @@ export default function LandingPage() {
 
                 <div className="mb-8 relative z-10">
                   <div className="flex items-end gap-1">
-                    <div className="text-5xl font-black text-slate-900 tracking-tight">₹199</div>
+                    <div className="text-5xl font-black text-slate-900 tracking-tight">INR 199</div>
                     <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-2">/ month</div>
                   </div>
                 </div>
 
-                <div className="space-y-5 mb-10 relative z-10 flex-grow">
+                <div className="space-y-5 mb-10 relative z-10 grow">
                   {[
                     "Up to 3 users",
                     "Basic analytics",
@@ -227,12 +244,12 @@ export default function LandingPage() {
 
                 <div className="mb-8 relative z-10">
                   <div className="flex items-end gap-1">
-                    <div className="text-5xl font-black text-slate-900 tracking-tight">₹499</div>
+                    <div className="text-5xl font-black text-slate-900 tracking-tight">INR 499</div>
                     <div className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-2">/ month</div>
                   </div>
                 </div>
 
-                <div className="space-y-5 mb-10 relative z-10 flex-grow">
+                <div className="space-y-5 mb-10 relative z-10 grow">
                   {[
                     "Up to 25 users",
                     "Advanced analytics",
@@ -249,7 +266,7 @@ export default function LandingPage() {
                   ))}
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all relative z-10">
+                <button className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3.5 rounded-xl text-lg font-bold shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all relative z-10">
                   Get Full Access
                 </button>
               </div>
@@ -275,7 +292,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm font-medium text-slate-400">© 2026 Billstack Technologies. All rights reserved.</p>
+            <p className="text-sm font-medium text-slate-400">(c) 2026 Billstack Technologies. All rights reserved.</p>
             <div className="flex gap-6 text-slate-400">
               <Link className="hover:text-slate-900 transition-colors" href="#" aria-label="Twitter">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" /></svg>
