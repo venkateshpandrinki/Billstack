@@ -1,4 +1,4 @@
-import { BillingInterval, PrismaClient } from "@prisma/client"
+import { BillingInterval, Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
@@ -6,7 +6,7 @@ async function upsertPlan(input: {
   name: string
   priceCents: number
   billingInterval: BillingInterval
-  metadata: Record<string, unknown>
+  metadata: Prisma.InputJsonValue
 }) {
   const existing = await prisma.plan.findFirst({
     where: {
