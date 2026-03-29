@@ -23,9 +23,11 @@ export async function proxy(req: NextRequest) {
   }
 
 
-  const isTenantDomain =
-    host.endsWith(process.env.BASE_DOMAIN!) &&
-    host !== process.env.BASE_DOMAIN!
+ const base = process.env.BASE_DOMAIN!
+
+const isTenantDomain =
+  host.endsWith("." + base) &&
+  host.split(".").length > base.split(".").length
 
   if (isTenantDomain && !session) {
     return NextResponse.redirect(new URL("/login", req.url))
@@ -35,5 +37,7 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|_next|favicon.ico).*)"],
+   matcher: [
+    "/((?!api/auth|_next|favicon.ico|login).*)",
+  ],
 }
