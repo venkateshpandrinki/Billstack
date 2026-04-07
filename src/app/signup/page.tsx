@@ -51,13 +51,7 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <p className="text-sm text-slate-500">
-              Already have credentials?{" "}
-              <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-600">
-                Sign in here
-              </Link>
-              .
-            </p>
+            
           </section>
 
           <AuthCard

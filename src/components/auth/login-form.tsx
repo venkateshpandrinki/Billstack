@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 
-export function LoginForm() {
+type LoginFormProps = {
+  defaultRedirectPath: string
+}
+
+export function LoginForm({ defaultRedirectPath }: LoginFormProps) {
   const [loading, setLoading] = useState(false)
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -17,10 +21,9 @@ export function LoginForm() {
     const formData = new FormData(e.currentTarget)
 
     await signIn("credentials", {
-     
       email: formData.get("email"),
       password: formData.get("password"),
-      callbackUrl: "/",
+      callbackUrl: defaultRedirectPath,
     })
 
     setLoading(false)
@@ -54,12 +57,12 @@ export function LoginForm() {
         {loading ? "Signing in..." : "Sign in"}
       </Button>
 
-      <p className="text-center text-sm text-slate-500">
+      {/* <p className="text-center text-sm text-slate-500">
         Need a workspace first?{" "}
         <Link href="/signup" className="font-semibold text-blue-700 hover:text-blue-600">
           Create one
         </Link>
-      </p>
+      </p> */}
     </form>
   )
 }

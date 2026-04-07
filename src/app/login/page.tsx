@@ -1,9 +1,43 @@
 import { AuthCard } from "@/components/auth/auth-card"
+import { auth } from "@/auth"
 import { LoginForm } from "@/components/auth/login-form"
+import { getTenantSlugFromHostname, isTenantHostname } from "@/utils/tenant"
 import { CheckCircle2, ShieldCheck, Sparkles } from "lucide-react"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 import Link from "next/link"
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth()
+  const requestHeaders = await headers()
+  const host = requestHeaders.get("host")
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? "https"
+  const baseDomain = process.env.BASE_DOMAIN!
+  const defaultRedirectPath = isTenantHostname(host)
+    ? "/dashboard"
+    : "/admin"
+  const description =
+    defaultRedirectPath === "/dashboard"
+      ? "Use your tenant admin credentials to continue into the dashboard."
+      : "Use your platform admin credentials to continue into the admin console."
+
+  if (session?.user) {
+    if (session.user.role === "SUPER_ADMIN") {
+      redirect(`${protocol}://${baseDomain}/admin`)
+    }
+
+    const requestedTenantSlug = getTenantSlugFromHostname(host)
+    if (session.user.tenantSlug) {
+      if (requestedTenantSlug === session.user.tenantSlug) {
+        redirect("/dashboard")
+      }
+
+      redirect(
+        `${protocol}://${session.user.tenantSlug}.${baseDomain}/dashboard`
+      )
+    }
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0">
@@ -63,12 +97,12 @@ export default function LoginPage() {
           <AuthCard
             eyebrow="Sign in"
             title="Sign in to your workspace"
-            description="Use your tenant admin credentials to continue into the dashboard."
+            description={description}
             footerLabel="Need a new tenant workspace?"
             footerHref="/signup"
             footerAction="Create one"
           >
-            <LoginForm />
+            <LoginForm defaultRedirectPath={defaultRedirectPath} />
           </AuthCard>
         </div>
       </div>

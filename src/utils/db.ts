@@ -11,3 +11,12 @@ export async function getUserFromDb(
     },
   })
 }
+
+export async function getSuperAdminFromDb(email: string) {
+  return prisma.user.findFirst({
+    where: {
+      email,
+      role: "SUPER_ADMIN",
+    },
+  })
+}

@@ -2,19 +2,16 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { ZodError } from "zod"
 import { signInSchema } from "@/lib/zod"
-import { getUserFromDb } from "@/utils/db"
+import { getSuperAdminFromDb, getUserFromDb } from "@/utils/db"
 import { verifyPassword } from "@/utils/password"
 import { getTenantFromHost } from "@/utils/tenant"
 
-
-
 export const { handlers, auth, signIn, signOut } = NextAuth({
- 
   session: {
     strategy: "jwt",
   },
-  pages:{
-signIn:'/login',
+  pages: {
+    signIn: "/login",
   },
   providers: [
     Credentials({
@@ -24,18 +21,15 @@ signIn:'/login',
       },
       authorize: async (credentials, req) => {
         try {
-          // 1. Validate input
           const { email, password } = await signInSchema.parseAsync(credentials)
-
-          // 2. Resolve tenant from subdomain
           const tenant = await getTenantFromHost(req.headers)
-          if (!tenant) return null
 
-          // 3. Fetch user scoped to tenant
-          const user = await getUserFromDb(email, tenant.id)
+          const user = tenant
+            ? await getUserFromDb(email, tenant.id)
+            : await getSuperAdminFromDb(email)
+
           if (!user) return null
 
-          // 4. Verify password
           if (!user.hashedPassword) return null
           const isValid = await verifyPassword(
             password,
@@ -43,12 +37,12 @@ signIn:'/login',
           )
           if (!isValid) return null
 
-          // 5. Return minimal session-safe user object
           return {
             id: user.id,
             email: user.email,
             role: user.role,
-            tenantId: tenant.id,
+            tenantId: user.tenantId ?? undefined,
+            tenantSlug: tenant?.slug ?? undefined,
           }
         } catch (error) {
           if (error instanceof ZodError) {
@@ -60,20 +54,21 @@ signIn:'/login',
     }),
   ],
   callbacks: {
-  async jwt({ token, user }) {
-        if (user) {
-      token.role = (user as any).role
-      token.tenantId = (user as any).tenantId
-    }
-    return token
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role
+        token.tenantId = (user as any).tenantId
+        token.tenantSlug = (user as any).tenantSlug
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role as any
+        session.user.tenantId = token.tenantId as string | undefined
+        session.user.tenantSlug = token.tenantSlug as string | undefined
+      }
+      return session
+    },
   },
-
-  async session({ session, token }) {
-    if (session.user) {
-      session.user.role = token.role as any
-      session.user.tenantId = token.tenantId as string
-    }
-    return session
-  },
-},
 })

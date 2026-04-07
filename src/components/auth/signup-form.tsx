@@ -73,12 +73,7 @@ export function SignupForm() {
         {loading ? "Creating workspace..." : "Create workspace"}
       </Button>
 
-      <p className="text-center text-sm text-slate-500">
-        Already registered?{" "}
-        <Link href="/login" className="font-semibold text-blue-700 hover:text-blue-600">
-          Sign in
-        </Link>
-      </p>
+      
     </form>
   )
 }
