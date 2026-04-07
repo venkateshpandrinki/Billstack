@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 import {
   Geist_Mono,
   Playfair_Display,
@@ -39,6 +40,7 @@ export default function RootLayout({
         className={`${jakarta.variable} ${playfair.variable} ${geistMono.variable} bg-background font-sans font-medium text-foreground antialiased`}
       >
         {children}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

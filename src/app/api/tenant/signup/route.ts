@@ -1,14 +1,21 @@
 import { prisma } from "@/lib/prisma"
+import { generateTenantApiKey } from "@/utils/api-key"
 import { saltAndHashPassword } from "@/utils/password"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
   const { company, slug, email, password } = await req.json()
+  const { apiKey, keyHash } = generateTenantApiKey()
 
   const tenant = await prisma.tenant.create({
     data: {
       name: company,
       slug,
+      apiKeys: {
+        create: {
+          keyHash,
+        },
+      },
       users: {
         create: {
           email,
@@ -21,5 +28,6 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     redirectUrl: `https://${slug}.${process.env.BASE_DOMAIN}/login`,
+    apiKey,
   })
 }

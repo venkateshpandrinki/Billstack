@@ -46,6 +46,7 @@ model Tenant {
   name          String
   planId        String? @db.Uuid
   plan          Plan?          @relation(fields: [planId], references: [id])
+  apiKeys       TenantApiKey[]
   subscriptions Subscription[]
   invoices      Invoice[]
   usageRecords  UsageRecord[]
@@ -111,6 +112,19 @@ model UsageRecord {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TenantApiKey {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId String @db.Uuid
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  keyHash  String @unique
+  lastUsed DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId])
 }
 
 /**

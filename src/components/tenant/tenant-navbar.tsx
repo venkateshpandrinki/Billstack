@@ -1,11 +1,12 @@
 import Link from "next/link"
-import { Command, LayoutDashboard, WalletCards } from "lucide-react"
+import { Command, KeyRound, LayoutDashboard, WalletCards } from "lucide-react"
 import { auth, signOut } from "@/auth"
 import { Button } from "@/components/ui/button"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/billing", label: "Billing", icon: WalletCards },
+  { href: "/api-keys", label: "API Keys", icon: KeyRound },
 ]
 
 export async function TenantNavbar() {

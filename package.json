@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "seed:mock": "tsx prisma/seed.mock.ts"
+    "seed:mock": "tsx prisma/seed.mock.ts",
+    "backfill:api-keys": "tsx prisma/backfill-tenant-api-keys.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -22,12 +23,14 @@
     "lucide-react": "^0.562.0",
     "next": "16.0.10",
     "next-auth": "^5.0.0-beta.30",
+    "next-themes": "^0.4.6",
     "pg": "^8.16.3",
     "prisma": "^6.19.2",
     "radix-ui": "^1.4.3",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "zod": "^4.3.5"
   },
